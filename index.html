@@ -1,262 +1,295 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نظرسنجی رضایت‌مندی</title>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-  :root{--bg:#f4f6f3;--bg2:#eef1ec;--surface:#ffffff;--green:#358353;--green-l:#e8f2ec;--green-d:#236b3f;--red:#cc332d;--red-l:#fdf0ef;--text:#1a2e22;--text-mid:#4a6355;--text-dim:#8aa898;--border:#d4e2da;--shadow:0 4px 24px rgba(53,131,83,0.10),0 1px 4px rgba(0,0,0,0.06)}
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);font-family:'Vazirmatn',sans-serif;color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;position:relative;overflow-x:hidden}
-  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 10% 20%,rgba(53,131,83,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 90% 80%,rgba(204,51,45,0.05) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 80% 10%,rgba(53,131,83,0.05) 0%,transparent 50%);pointer-events:none;z-index:0}
-  body::after{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(53,131,83,0.12) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0}
-  #app{position:relative;z-index:10;width:100%;max-width:660px}
-  .card{background:var(--surface);border-radius:28px;padding:52px 48px;box-shadow:var(--shadow);border:1px solid rgba(53,131,83,0.10);position:relative;overflow:hidden}
-  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--green),#5cb87a,var(--red))}
-  .progress-outer{height:6px;background:var(--bg2);border-radius:10px;margin-bottom:44px;overflow:hidden;border:1px solid var(--border)}
-  .progress-inner{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green-d),var(--green),#5cb87a);transition:width 0.7s cubic-bezier(0.4,0,0.2,1);position:relative}
-  .progress-inner::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.4) 50%,transparent 100%);animation:sheen 2s ease-in-out infinite}
-  @keyframes sheen{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-  .step-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-  .step-text{font-size:12px;font-weight:700;color:var(--text-dim);letter-spacing:0.5px}
-  .step-num{font-size:13px;font-weight:800;color:var(--green)}
-  .q-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-l);border:1px solid rgba(53,131,83,0.2);border-radius:100px;padding:6px 16px;font-size:11px;font-weight:800;color:var(--green-d);letter-spacing:0.5px;margin-bottom:20px}
-  .q-badge .dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:blink 1.4s ease-in-out infinite}
-  @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
-  .q-text{font-size:22px;font-weight:800;line-height:1.6;color:var(--text);margin-bottom:32px;letter-spacing:-0.2px}
-  .scale-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
-  .scale-opt{position:relative;display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:14px;border:1.5px solid var(--border);background:#fafcfa;cursor:pointer;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);overflow:hidden;user-select:none}
-  .scale-opt:hover{border-color:var(--green);background:var(--green-l);transform:translateX(-3px)}
-  .scale-opt.selected{border-color:var(--green);background:var(--green-l);transform:translateX(-3px);box-shadow:0 2px 12px rgba(53,131,83,0.15)}
-  .scale-opt.opt-0:hover,.scale-opt.opt-0.selected{border-color:var(--red);background:var(--red-l);box-shadow:0 2px 12px rgba(204,51,45,0.12)}
-  .scale-opt.opt-0.selected .radio-ring{border-color:var(--red)}
-  .scale-opt.opt-0.selected .radio-ring::after{background:var(--red);box-shadow:0 0 6px var(--red)}
-  .scale-opt.opt-0.selected .opt-label{color:var(--red)}
-  .scale-opt.opt-0.selected .opt-tag{background:var(--red);border-color:var(--red)}
-  .radio-ring{flex-shrink:0;width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all 0.2s}
-  .scale-opt.selected .radio-ring{border-color:var(--green);background:rgba(53,131,83,0.08)}
-  .radio-ring::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(53,131,83,0.5);transform:scale(0);transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1)}
-  .scale-opt.selected .radio-ring::after{transform:scale(1)}
-  .opt-icon{font-size:20px;flex-shrink:0}
-  .opt-label{font-size:15px;font-weight:600;color:var(--text-mid);flex:1;transition:color 0.2s}
-  .scale-opt.selected .opt-label{color:var(--green-d)}
-  .opt-tag{font-size:10px;font-weight:800;color:var(--text-dim);letter-spacing:0.5px;padding:3px 10px;border-radius:100px;background:var(--bg2);border:1px solid var(--border);transition:all 0.2s}
-  .scale-opt.selected .opt-tag{background:var(--green);color:#fff;border-color:var(--green)}
-  .ripple{position:absolute;border-radius:50%;background:rgba(53,131,83,0.18);transform:scale(0);animation:ripAnim 0.55s linear;pointer-events:none}
-  @keyframes ripAnim{to{transform:scale(4);opacity:0}}
-  .auto-bar{height:3px;background:var(--bg2);border-radius:4px;margin-top:16px;overflow:hidden;display:none}
-  .auto-bar.active{display:block}
-  .auto-fill{height:100%;width:0%;background:var(--green);border-radius:4px;animation:autoFill 0.85s linear forwards}
-  @keyframes autoFill{to{width:100%}}
-  .feedback-wrap{margin-top:4px}
-  .feedback-label{font-size:13px;font-weight:700;color:var(--text-mid);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-  .feedback-label span{background:var(--red-l);color:var(--red);font-size:10px;font-weight:800;padding:2px 8px;border-radius:100px;border:1px solid rgba(204,51,45,0.2)}
-  textarea{width:100%;min-height:120px;border:1.5px solid var(--border);border-radius:14px;padding:16px 18px;font-family:'Vazirmatn',sans-serif;font-size:14px;font-weight:400;color:var(--text);background:#fafcfa;resize:vertical;outline:none;transition:border-color 0.2s,box-shadow 0.2s;line-height:1.7}
-  textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(53,131,83,0.08)}
-  textarea::placeholder{color:var(--text-dim)}
-  .btn-submit{margin-top:24px;width:100%;padding:18px;background:linear-gradient(135deg,var(--green-d),var(--green));border:none;border-radius:14px;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:0.3px;transition:all 0.3s;box-shadow:0 4px 20px rgba(53,131,83,0.3);position:relative;overflow:hidden}
-  .btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(53,131,83,0.35)}
-  .page{animation:pageIn 0.45s cubic-bezier(0.4,0,0.2,1) both}
-  @keyframes pageIn{from{opacity:0;transform:translateY(28px) scale(0.98)}to{opacity:1;transform:none}}
-  .page-out{animation:pageOut 0.3s cubic-bezier(0.4,0,0.2,1) both !important}
-  @keyframes pageOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-18px)}}
-  .intro-logo{display:flex;align-items:center;justify-content:center;margin-bottom:32px}
-  .intro-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--green),#5cb87a);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 8px 24px rgba(53,131,83,0.3)}
-  .intro-title{font-size:28px;font-weight:900;color:var(--text);text-align:center;margin-bottom:12px;letter-spacing:-0.4px}
-  .intro-subtitle{font-size:14px;font-weight:500;color:var(--text-mid);text-align:center;line-height:1.9;margin-bottom:32px}
-  .intro-subtitle strong{color:var(--green-d);font-weight:700}
-  .intro-notice{background:linear-gradient(135deg,var(--green-l),#f0f8f3);border:1px solid rgba(53,131,83,0.2);border-radius:14px;padding:18px 20px;margin-bottom:32px;display:flex;gap:14px;align-items:flex-start}
-  .notice-icon{font-size:22px;flex-shrink:0;margin-top:1px}
-  .notice-text{font-size:13px;font-weight:500;color:var(--green-d);line-height:1.8}
-  .intro-stats{display:flex;gap:12px;margin-bottom:36px}
-  .stat-box{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center}
-  .stat-num{font-size:22px;font-weight:900;color:var(--green-d)}
-  .stat-lbl{font-size:11px;font-weight:600;color:var(--text-dim);margin-top:2px}
-  .btn-start{width:100%;padding:20px;background:linear-gradient(135deg,var(--green-d),var(--green),#5cb87a);border:none;border-radius:16px;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:18px;font-weight:900;cursor:pointer;letter-spacing:0.3px;transition:all 0.3s;box-shadow:0 6px 24px rgba(53,131,83,0.35);animation:btnPulse 2.5s ease-in-out infinite}
-  @keyframes btnPulse{0%,100%{box-shadow:0 6px 24px rgba(53,131,83,0.35)}50%{box-shadow:0 8px 32px rgba(53,131,83,0.55)}}
-  .btn-start:hover{transform:translateY(-3px)}
-  .sending-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;border-radius:28px;backdrop-filter:blur(8px);z-index:50;animation:pageIn 0.3s ease both}
-  .spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 0.7s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .sending-text{font-size:14px;font-weight:700;color:var(--green-d)}
-  .done-screen{text-align:center;padding:16px 0}
-  .done-icon-wrap{width:84px;height:84px;background:linear-gradient(135deg,var(--green-l),#dff0e6);border:2px solid rgba(53,131,83,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 28px;animation:bounceIn 0.7s cubic-bezier(0.34,1.56,0.64,1) both;animation-delay:0.2s;opacity:0;box-shadow:0 8px 28px rgba(53,131,83,0.2)}
-  @keyframes bounceIn{from{opacity:0;transform:scale(0.3)rotate(-15deg)}to{opacity:1;transform:none}}
-  .done-title{font-size:30px;font-weight:900;color:var(--text);margin-bottom:12px;opacity:0;animation:slideUp 0.5s ease both;animation-delay:0.5s}
-  .done-msg{font-size:15px;font-weight:400;color:var(--text-mid);line-height:1.8;opacity:0;animation:slideUp 0.5s ease both;animation-delay:0.7s}
-  .done-msg strong{color:var(--green-d);font-weight:700}
-  .done-divider{height:1px;background:var(--border);margin:28px 0;opacity:0;animation:slideUp 0.5s ease both;animation-delay:0.9s}
-  .done-thanks{font-size:13px;color:var(--text-dim);font-weight:500;opacity:0;animation:slideUp 0.5s ease both;animation-delay:1s}
-  @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-  .confetti-wrap{position:absolute;inset:0;overflow:hidden;pointer-events:none;border-radius:28px}
-  .cc{position:absolute;width:7px;height:7px;border-radius:2px;opacity:0;animation:ccFall 2.5s ease-out both}
-  @keyframes ccFall{0%{opacity:1;transform:translateY(-10px)rotate(0)scale(1)}100%{opacity:0;transform:translateY(220px)rotate(600deg)scale(0.4)}}
-  @media(max-width:600px){.card{padding:36px 24px}.q-text{font-size:18px}.intro-title{font-size:22px}.intro-stats{flex-wrap:wrap}.stat-box{min-width:calc(50% - 6px)}.scale-opt{padding:13px 16px}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظرسنجی دهه فجر ۱۴۰۴</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#f4f6f3;--bg2:#eef1ec;--surface:#ffffff;--green:#358353;--green-l:#e8f2ec;--green-d:#236b3f;--red:#cc332d;--red-l:#fdf0ef;--text:#1a2e22;--text-mid:#4a6355;--text-dim:#8aa898;--border:#d4e2da;--shadow:0 4px 24px rgba(53,131,83,0.10),0 1px 4px rgba(0,0,0,0.06)}
+          *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+          body{background:var(--bg);font-family:'Vazirmatn',sans-serif;color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;position:relative;overflow-x:hidden}
+          body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 10% 20%,rgba(53,131,83,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 90% 80%,rgba(204,51,45,0.05) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 80% 10%,rgba(53,131,83,0.05) 0%,transparent 50%);pointer-events:none;z-index:0}
+          body::after{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(53,131,83,0.12) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0}
+          #app{position:relative;z-index:10;width:100%;max-width:660px}
+          .card{background:var(--surface);border-radius:28px;padding:52px 48px;box-shadow:var(--shadow);border:1px solid rgba(53,131,83,0.10);position:relative;overflow:hidden}
+          .card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--green),#5cb87a,var(--red))}
+          .progress-outer{height:6px;background:var(--bg2);border-radius:10px;margin-bottom:44px;overflow:hidden;border:1px solid var(--border)}
+          .progress-inner{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green-d),var(--green),#5cb87a);transition:width 0.7s cubic-bezier(0.4,0,0.2,1);position:relative}
+          .progress-inner::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.4) 50%,transparent 100%);animation:sheen 2s ease-in-out infinite}
+          @keyframes sheen{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+          .step-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+          .step-text{font-size:12px;font-weight:700;color:var(--text-dim);letter-spacing:0.5px}
+          .step-num{font-size:13px;font-weight:800;color:var(--green)}
+          .q-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-l);border:1px solid rgba(53,131,83,0.2);border-radius:100px;padding:6px 16px;font-size:11px;font-weight:800;color:var(--green-d);letter-spacing:0.5px;margin-bottom:20px}
+          .q-badge .dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:blink 1.4s ease-in-out infinite}
+          @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+          .q-text{font-size:22px;font-weight:800;line-height:1.6;color:var(--text);margin-bottom:32px;letter-spacing:-0.2px}
+          .scale-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+          .scale-opt{position:relative;display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:14px;border:1.5px solid var(--border);background:#fafcfa;cursor:pointer;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);overflow:hidden;user-select:none}
+          .scale-opt:hover{border-color:var(--green);background:var(--green-l);transform:translateX(-3px)}
+          .scale-opt.selected{border-color:var(--green);background:var(--green-l);transform:translateX(-3px);box-shadow:0 2px 12px rgba(53,131,83,0.15)}
+          .scale-opt.opt-0:hover,.scale-opt.opt-0.selected{border-color:var(--red);background:var(--red-l);box-shadow:0 2px 12px rgba(204,51,45,0.12)}
+          .scale-opt.opt-0.selected .radio-ring{border-color:var(--red)}
+          .scale-opt.opt-0.selected .radio-ring::after{background:var(--red);box-shadow:0 0 6px var(--red)}
+          .scale-opt.opt-0.selected .opt-label{color:var(--red)}
+          .scale-opt.opt-0.selected .opt-tag{background:var(--red);border-color:var(--red)}
+          .radio-ring{flex-shrink:0;width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+          .scale-opt.selected .radio-ring{border-color:var(--green);background:rgba(53,131,83,0.08)}
+          .radio-ring::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(53,131,83,0.5);transform:scale(0);transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1)}
+          .scale-opt.selected .radio-ring::after{transform:scale(1)}
+          .opt-icon{font-size:20px;flex-shrink:0}
+          .opt-label{font-size:15px;font-weight:600;color:var(--text-mid);flex:1;transition:color 0.2s}
+          .scale-opt.selected .opt-label{color:var(--green-d)}
+          .opt-tag{font-size:10px;font-weight:800;color:var(--text-dim);letter-spacing:0.5px;padding:3px 10px;border-radius:100px;background:var(--bg2);border:1px solid var(--border);transition:all 0.2s}
+          .scale-opt.selected .opt-tag{background:var(--green);color:#fff;border-color:var(--green)}
+          .ripple{position:absolute;border-radius:50%;background:rgba(53,131,83,0.18);transform:scale(0);animation:ripAnim 0.55s linear;pointer-events:none}
+          @keyframes ripAnim{to{transform:scale(4);opacity:0}}
+          .auto-bar{height:3px;background:var(--bg2);border-radius:4px;margin-top:16px;overflow:hidden;display:none}
+          .auto-bar.active{display:block}
+          .auto-fill{height:100%;width:0%;background:var(--green);border-radius:4px;animation:autoFill 0.85s linear forwards}
+          @keyframes autoFill{to{width:100%}}
+          /* Feedback page */
+          .feedback-section{margin-bottom:24px}
+          .feedback-label{font-size:14px;font-weight:800;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+          .feedback-label .badge-opt{background:var(--red-l);color:var(--red);font-size:10px;font-weight:800;padding:2px 9px;border-radius:100px;border:1px solid rgba(204,51,45,0.2)}
+          .feedback-label .badge-green{background:var(--green-l);color:var(--green-d);font-size:10px;font-weight:800;padding:2px 9px;border-radius:100px;border:1px solid rgba(53,131,83,0.2)}
+          textarea{width:100%;min-height:100px;border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;font-family:'Vazirmatn',sans-serif;font-size:14px;font-weight:400;color:var(--text);background:#fafcfa;resize:vertical;outline:none;transition:border-color 0.2s,box-shadow 0.2s;line-height:1.7}
+          textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(53,131,83,0.08)}
+          textarea::placeholder{color:var(--text-dim)}
+          .btn-submit{margin-top:8px;width:100%;padding:18px;background:linear-gradient(135deg,var(--green-d),var(--green));border:none;border-radius:14px;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:0.3px;transition:all 0.3s;box-shadow:0 4px 20px rgba(53,131,83,0.3)}
+          .btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(53,131,83,0.35)}
+          .page{animation:pageIn 0.45s cubic-bezier(0.4,0,0.2,1) both}
+          @keyframes pageIn{from{opacity:0;transform:translateY(28px) scale(0.98)}to{opacity:1;transform:none}}
+          .page-out{animation:pageOut 0.3s cubic-bezier(0.4,0,0.2,1) both !important}
+          @keyframes pageOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-18px)}}
+          /* Intro */
+          .intro-logo{display:flex;align-items:center;justify-content:center;margin-bottom:28px}
+          .intro-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--green),#5cb87a);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 8px 24px rgba(53,131,83,0.3)}
+          .intro-badge{display:inline-block;background:var(--red-l);border:1px solid rgba(204,51,45,0.25);border-radius:100px;padding:5px 16px;font-size:11px;font-weight:800;color:var(--red);margin:0 auto 16px;display:flex;justify-content:center}
+          .intro-title{font-size:24px;font-weight:900;color:var(--text);text-align:center;margin-bottom:6px;letter-spacing:-0.3px;line-height:1.4}
+          .intro-year{font-size:14px;font-weight:700;color:var(--green-d);text-align:center;margin-bottom:24px}
+          .intro-divider{height:1px;background:var(--border);margin:20px 0}
+          .intro-body{font-size:13.5px;font-weight:500;color:var(--text-mid);line-height:2;text-align:justify;margin-bottom:28px}
+          .intro-notice{background:linear-gradient(135deg,var(--green-l),#f0f8f3);border:1px solid rgba(53,131,83,0.2);border-radius:14px;padding:16px 18px;margin-bottom:28px;display:flex;gap:12px;align-items:flex-start}
+          .notice-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+          .notice-text{font-size:13px;font-weight:600;color:var(--green-d);line-height:1.8}
+          .intro-stats{display:flex;gap:10px;margin-bottom:32px}
+          .stat-box{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center}
+          .stat-num{font-size:22px;font-weight:900;color:var(--green-d)}
+          .stat-lbl{font-size:11px;font-weight:600;color:var(--text-dim);margin-top:2px}
+          .btn-start{width:100%;padding:20px;background:linear-gradient(135deg,var(--green-d),var(--green),#5cb87a);border:none;border-radius:16px;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:18px;font-weight:900;cursor:pointer;letter-spacing:0.3px;transition:all 0.3s;box-shadow:0 6px 24px rgba(53,131,83,0.35);animation:btnPulse 2.5s ease-in-out infinite}
+          @keyframes btnPulse{0%,100%{box-shadow:0 6px 24px rgba(53,131,83,0.35)}50%{box-shadow:0 8px 32px rgba(53,131,83,0.55)}}
+          .btn-start:hover{transform:translateY(-3px)}
+          /* Sending */
+          .sending-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;border-radius:28px;backdrop-filter:blur(8px);z-index:50;animation:pageIn 0.3s ease both}
+          .spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 0.7s linear infinite}
+          @keyframes spin{to{transform:rotate(360deg)}}
+          .sending-text{font-size:14px;font-weight:700;color:var(--green-d)}
+          /* Done */
+          .done-screen{text-align:center;padding:16px 0}
+          .done-icon-wrap{width:84px;height:84px;background:linear-gradient(135deg,var(--green-l),#dff0e6);border:2px solid rgba(53,131,83,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 28px;animation:bounceIn 0.7s cubic-bezier(0.34,1.56,0.64,1) both;animation-delay:0.2s;opacity:0;box-shadow:0 8px 28px rgba(53,131,83,0.2)}
+          @keyframes bounceIn{from{opacity:0;transform:scale(0.3)rotate(-15deg)}to{opacity:1;transform:none}}
+          .done-title{font-size:30px;font-weight:900;color:var(--text);margin-bottom:12px;opacity:0;animation:slideUp 0.5s ease both;animation-delay:0.5s}
+          .done-msg{font-size:15px;font-weight:400;color:var(--text-mid);line-height:1.8;opacity:0;animation:slideUp 0.5s ease both;animation-delay:0.7s}
+          .done-msg strong{color:var(--green-d);font-weight:700}
+          .done-divider{height:1px;background:var(--border);margin:24px 0;opacity:0;animation:slideUp 0.5s ease both;animation-delay:0.9s}
+          .done-thanks{font-size:13px;color:var(--text-dim);font-weight:500;opacity:0;animation:slideUp 0.5s ease both;animation-delay:1s;line-height:1.8}
+          @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+          .confetti-wrap{position:absolute;inset:0;overflow:hidden;pointer-events:none;border-radius:28px}
+          .cc{position:absolute;width:7px;height:7px;border-radius:2px;opacity:0;animation:ccFall 2.5s ease-out both}
+          @keyframes ccFall{0%{opacity:1;transform:translateY(-10px)rotate(0)scale(1)}100%{opacity:0;transform:translateY(220px)rotate(600deg)scale(0.4)}}
+          @media(max-width:600px){.card{padding:32px 20px}.q-text{font-size:18px}.intro-title{font-size:20px}.intro-stats{flex-wrap:wrap}.stat-box{min-width:calc(50% - 5px)}.scale-opt{padding:13px 14px}}
+    </style>
 </head>
+
 <body>
-<div id="app"></div>
-<script>
-const FORM_URL="https://formspree.io/f/mwvnlbbn";
-const questions=[
-  {text:"کیفیت کلی خدمات ما را چطور ارزیابی می‌کنید؟"},
-  {text:"سرعت و دقت پاسخگویی تیم ما چقدر بود؟"},
-  {text:"میزان رضایت شما از محصولات ارائه‌شده چقدر است؟"},
-  {text:"آیا کارکنان ما به اندازه کافی حرفه‌ای و مؤدب بودند؟"},
-  {text:"قیمت‌گذاری ما را نسبت به کیفیت چطور می‌بینید؟"},
-  {text:"آیا فرآیند دریافت خدمات آسان و روان بود؟"},
-  {text:"تا چه اندازه انتظارات شما برآورده شد؟"},
-  {text:"چقدر احتمال دارد ما را به دیگران توصیه کنید؟"},
-  {text:"به طور کلی، تجربه همکاری با ما را چطور ارزیابی می‌کنید؟"}
-];
-const scaleOpts=[
-  {label:"ضعیف",icon:"😞",tag:"۱"},
-  {label:"نسبتاً ضعیف",icon:"😕",tag:"۲"},
-  {label:"متوسط",icon:"😐",tag:"۳"},
-  {label:"خوب",icon:"🙂",tag:"۴"},
-  {label:"عالی",icon:"😍",tag:"۵"}
-];
-let current=-1,answers=new Array(questions.length).fill(null),startTime=null,userIP="نامشخص",userDevice="";
-const app=document.getElementById("app");
-
-async function detectInfo(){
-  try{const r=await fetch("https://api.ipify.org?format=json");const d=await r.json();userIP=d.ip;}catch(e){}
-  const ua=navigator.userAgent;
-  if(/iPhone/.test(ua)){const m=ua.match(/iPhone OS ([\d_]+)/);userDevice="iPhone"+(m?" iOS "+m[1].replace(/_/g,"."):"");}
-  else if(/iPad/.test(ua)){userDevice="iPad";}
-  else if(/Android/.test(ua)){const m=ua.match(/Android ([\d.]+);?\s*([^;)]+)?/);userDevice="Android "+(m?m[1]+(m[2]?" - "+m[2].trim():""):"");}
-  else if(/Windows NT/.test(ua)){userDevice="Windows Desktop";}
-  else if(/Mac OS X/.test(ua)){userDevice="Mac Desktop";}
-  else{userDevice=ua.substring(0,60);}
-}
-detectInfo();
-
-function renderIntro(){
-  app.innerHTML=`<div class="card page">
-    <div class="intro-logo"><div class="intro-icon">📋</div></div>
-    <div class="intro-title">نظرسنجی رضایت‌مندی</div>
-    <div class="intro-subtitle">با سلام و احترام،<br>این نظرسنجی با هدف <strong>بهبود کیفیت خدمات</strong> طراحی شده است.<br>نظر صادقانه شما برای ما بسیار ارزشمند است.</div>
-    <div class="intro-notice">
-      <div class="notice-icon">🙏</div>
-      <div class="notice-text">لطفاً با <strong>حوصله و دقت</strong> به سوالات پاسخ دهید.<br>پاسخ‌های شما کاملاً محرمانه بوده و فقط برای بهبود خدمات استفاده می‌شود.</div>
-    </div>
-    <div class="intro-stats">
-      <div class="stat-box"><div class="stat-num">۹</div><div class="stat-lbl">سوال</div></div>
-      <div class="stat-box"><div class="stat-num">۳</div><div class="stat-lbl">دقیقه</div></div>
-      <div class="stat-box"><div class="stat-num">۱۰۰٪</div><div class="stat-lbl">محرمانه</div></div>
-    </div>
-    <button class="btn-start" onclick="startSurvey()">شروع نظرسنجی ←</button>
-  </div>`;
-}
-
-function startSurvey(){
-  startTime=Date.now();
-  const c=app.querySelector(".card");
-  c.classList.add("page-out");
-  setTimeout(()=>{current=0;render();},300);
-}
-
-function render(){
-  if(current>=questions.length){renderFeedback();return;}
-  const q=questions[current];
-  const pct=Math.round((current/questions.length)*100);
-  app.innerHTML=`<div class="card page" id="q-card">
-    <div class="step-label"><span class="step-text">پیشرفت شما</span><span class="step-num">سوال ${current+1} از ${questions.length}</span></div>
-    <div class="progress-outer"><div class="progress-inner" style="width:${pct}%"></div></div>
-    <div class="q-badge"><span class="dot"></span>سوال ${current+1} از ${questions.length}</div>
-    <div class="q-text">${q.text}</div>
-    <div class="scale-wrap">
-      ${scaleOpts.map((o,i)=>`<div class="scale-opt opt-${i}${answers[current]===i?" selected":""}" onclick="selectOpt(this,${i})">
-        <div class="radio-ring"></div>
-        <span class="opt-icon">${o.icon}</span>
-        <span class="opt-label">${o.label}</span>
-        <span class="opt-tag">${o.tag}</span>
-      </div>`).join("")}
-    </div>
-    <div class="auto-bar${answers[current]!==null?" active":""}" id="auto-bar">
-      <div class="auto-fill"></div>
-    </div>
-  </div>`;
-}
-
-function selectOpt(el,idx){
-  const rip=document.createElement("span");
-  rip.className="ripple";
-  const s=Math.max(el.offsetWidth,el.offsetHeight);
-  rip.style.cssText=`width:${s}px;height:${s}px;top:${(el.offsetHeight-s)/2}px;right:${(el.offsetWidth-s)/2}px;`;
-  el.appendChild(rip);
-  setTimeout(()=>rip.remove(),600);
-  document.querySelectorAll(".scale-opt").forEach(o=>o.classList.remove("selected"));
-  el.classList.add("selected");
-  answers[current]=idx;
-  const bar=document.getElementById("auto-bar");
-  if(bar)bar.classList.add("active");
-  setTimeout(()=>{
-    const card=document.getElementById("q-card");
-    if(!card)return;
-    card.classList.add("page-out");
-    setTimeout(()=>{current++;render();},300);
-  },850);
-}
-
-function renderFeedback(){
-  app.innerHTML=`<div class="card page" id="q-card">
-    <div class="step-label"><span class="step-text">پیشرفت شما</span><span class="step-num">آخرین مرحله</span></div>
-    <div class="progress-outer"><div class="progress-inner" style="width:95%"></div></div>
-    <div class="q-badge"><span class="dot"></span>انتقادات و پیشنهادات</div>
-    <div class="q-text">نظر، انتقاد یا پیشنهادی دارید؟</div>
-    <div class="feedback-wrap">
-      <div class="feedback-label">متن خود را بنویسید <span>اختیاری</span></div>
-      <textarea id="fb" placeholder="هر نظر یا پیشنهادی که دارید اینجا بنویسید..."></textarea>
-    </div>
-    <button class="btn-submit" onclick="submitAll()">ثبت نهایی پاسخ‌ها ✓</button>
-  </div>`;
-}
-
-async function submitAll(){
-  const fb=document.getElementById("fb")?.value||"";
-  const duration=Math.round((Date.now()-startTime)/1000);
-  const mins=Math.floor(duration/60),secs=duration%60;
-  const card=document.getElementById("q-card");
-  if(card){
-    const ov=document.createElement("div");
-    ov.className="sending-overlay";
-    ov.innerHTML=`<div class="spinner"></div><div class="sending-text">در حال ثبت پاسخ‌ها...</div>`;
-    card.appendChild(ov);
-  }
-  const body=new FormData();
-  questions.forEach((q,i)=>{
-    const ans=answers[i]!==null?scaleOpts[answers[i]].label+` (${scaleOpts[answers[i]].tag})`:"بدون پاسخ";
-    body.append(`س${i+1}: ${q.text}`,ans);
-  });
-  body.append("انتقادات و پیشنهادات",fb||"---");
-  body.append("مدت پاسخ‌دهی",`${mins} دقیقه و ${secs} ثانیه`);
-  body.append("آی‌پی کاربر",userIP);
-  body.append("دستگاه کاربر",userDevice);
-  body.append("تاریخ و ساعت",new Date().toLocaleString("fa-IR"));
-  try{await fetch(FORM_URL,{method:"POST",body,headers:{Accept:"application/json"}});}catch(e){}
-  renderDone(mins,secs);
-}
-
-function renderDone(mins,secs){
-  const t=mins>0?`${mins} دقیقه و ${secs} ثانیه`:`${secs} ثانیه`;
-  const cl=["#358353","#cc332d","#5cb87a","#e8a020","#4a9eca","#a855f7"];
-  let cc="";
-  for(let i=0;i<30;i++){cc+=`<div class="cc" style="background:${cl[i%cl.length]};left:${Math.random()*100}%;top:8%;animation-delay:${Math.random()*1.2}s;animation-duration:${2+Math.random()*1.5}s"></div>`;}
-  app.innerHTML=`<div class="card page">
-    <div class="confetti-wrap">${cc}</div>
-    <div class="done-screen">
-      <div class="done-icon-wrap">🎉</div>
-      <div class="done-title">ممنون از شما!</div>
-      <div class="done-msg">پاسخ‌های شما با موفقیت ثبت شدند.<br><strong>${questions.length} سوال</strong> را در <strong>${t}</strong> پاسخ دادید.</div>
-      <div class="done-divider"></div>
-      <div class="done-thanks">نظر شما برای ما ارزشمند است ❤️<br>با کمک شما خدماتمان را بهتر می‌کنیم.</div>
-    </div>
-  </div>`;
-}
-
-renderIntro();
-</script>
+    <div id="app"></div>
+    <script>
+        const FORM_URL="https://formspree.io/f/mwvnlbbn";
+        
+        const questions=[
+          {text:"محل و ساعت برگزاری مراسم"},
+          {text:"پذیرایی مراسم"},
+          {text:"نحوه اطلاع‌رسانی جهت حضور در مراسم"},
+          {text:"سین برنامه و محتوای برنامه"},
+          {text:"کیفیت و تأثیرگذاری سخنرانی"},
+          {text:"برنامه گروه نمایش"},
+          {text:"ژتون غذا و رستوران‌های طرف قرارداد"},
+          {text:"اجرای مسابقه و جوایز برنامه"},
+          {text:"نحوه برخورد مسئولان اجرایی"}
+        ];
+        
+        // 4 options: ضعیف، متوسط، خوب، عالی
+        const scaleOpts=[
+          {label:"ضعیف",  icon:"😞", tag:"۱"},
+          {label:"متوسط", icon:"😐", tag:"۲"},
+          {label:"خوب",   icon:"🙂", tag:"۳"},
+          {label:"عالی",  icon:"😍", tag:"۴"}
+        ];
+        
+        let current=-1, answers=new Array(questions.length).fill(null);
+        let startTime=null, userIP="نامشخص", userDevice="";
+        const app=document.getElementById("app");
+        
+        async function detectInfo(){
+          try{const r=await fetch("https://api.ipify.org?format=json");const d=await r.json();userIP=d.ip;}catch(e){}
+          const ua=navigator.userAgent;
+          if(/iPhone/.test(ua)){const m=ua.match(/iPhone OS ([\d_]+)/);userDevice="iPhone"+(m?" iOS "+m[1].replace(/_/g,"."):"");}
+          else if(/iPad/.test(ua)){userDevice="iPad";}
+          else if(/Android/.test(ua)){const m=ua.match(/Android ([\d.]+);?\s*([^;)]+)?/);userDevice="Android "+(m?m[1]+(m[2]?" - "+m[2].trim():""):"");}
+          else if(/Windows NT/.test(ua)){userDevice="Windows Desktop";}
+          else if(/Mac OS X/.test(ua)){userDevice="Mac Desktop";}
+          else{userDevice=ua.substring(0,60);}
+        }
+        detectInfo();
+        
+        function renderIntro(){
+          app.innerHTML=`<div class="card page">
+            <div class="intro-badge">بسمه تعالی</div>
+            <div class="intro-title">نظرسنجی اجرای برنامه ضیافت گرامیداشت دهه فجر سال ۱۴۰۴</div>
+            <div class="intro-divider"></div>
+            <div class="intro-body">
+              با سلام و احترام؛<br>
+              از آنجا که برنامه‌ریزی جهت هر چه بهتر شدن برنامه‌های فرهنگی نیازمند دیدگاه‌ها و نظرهای شما همکاران محترم است، مستدعی است با تکمیل فرم ذیل ما را در جهت برنامه‌ریزی هرچه بهتر یاری فرمایید.
+            </div>
+            <div class="intro-notice">
+              <div class="notice-text">لطفاً با <strong>حوصله و دقت</strong> به سوالات پاسخ دهید.<br>پاسخ‌های شما کاملاً محرمانه بوده و فقط برای بهبود برنامه‌ریزی استفاده می‌شود.</div>
+            </div>
+            <div class="intro-stats">
+              <div class="stat-box"><div class="stat-num">۹</div><div class="stat-lbl">سوال</div></div>
+              <div class="stat-box"><div class="stat-num">۳</div><div class="stat-lbl">دقیقه</div></div>
+              <div class="stat-box"><div class="stat-num">۱۰۰٪</div><div class="stat-lbl">محرمانه</div></div>
+            </div>
+            <button class="btn-start" onclick="startSurvey()">شروع نظرسنجی ←</button>
+          </div>`;
+        }
+        
+        function startSurvey(){
+          startTime=Date.now();
+          app.querySelector(".card").classList.add("page-out");
+          setTimeout(()=>{current=0;render();},300);
+        }
+        
+        function render(){
+          if(current>=questions.length){renderFeedback();return;}
+          const q=questions[current];
+          const pct=Math.round((current/questions.length)*100);
+          app.innerHTML=`<div class="card page" id="q-card">
+            <div class="step-label">
+              <span class="step-text">پیشرفت شما</span>
+              <span class="step-num">سوال ${current+1} از ${questions.length}</span>
+            </div>
+            <div class="progress-outer"><div class="progress-inner" style="width:${pct}%"></div></div>
+            <div class="q-badge"><span class="dot"></span>ردیف ${current+1}</div>
+            <div class="q-text">${q.text}</div>
+            <div class="scale-wrap">
+              ${scaleOpts.map((o,i)=>`
+                <div class="scale-opt opt-${i}${answers[current]===i?" selected":""}" onclick="selectOpt(this,${i})">
+                  <div class="radio-ring"></div>
+                  <span class="opt-icon">${o.icon}</span>
+                  <span class="opt-label">${o.label}</span>
+                  <span class="opt-tag">${o.tag}</span>
+                </div>`).join("")}
+            </div>
+            <div class="auto-bar${answers[current]!==null?" active":""}" id="auto-bar">
+              <div class="auto-fill"></div>
+            </div>
+          </div>`;
+        }
+        
+        function selectOpt(el,idx){
+          const rip=document.createElement("span");
+          rip.className="ripple";
+          const s=Math.max(el.offsetWidth,el.offsetHeight);
+          rip.style.cssText=`width:${s}px;height:${s}px;top:${(el.offsetHeight-s)/2}px;right:${(el.offsetWidth-s)/2}px;`;
+          el.appendChild(rip);
+          setTimeout(()=>rip.remove(),600);
+          document.querySelectorAll(".scale-opt").forEach(o=>o.classList.remove("selected"));
+          el.classList.add("selected");
+          answers[current]=idx;
+          const bar=document.getElementById("auto-bar");
+          if(bar)bar.classList.add("active");
+          setTimeout(()=>{
+            const card=document.getElementById("q-card");
+            if(!card)return;
+            card.classList.add("page-out");
+            setTimeout(()=>{current++;render();},300);
+          },400);
+        }
+        
+        function renderFeedback(){
+          app.innerHTML=`<div class="card page" id="q-card">
+            <div class="step-label">
+              <span class="step-text">پیشرفت شما</span>
+              <span class="step-num">آخرین مرحله</span>
+            </div>
+            <div class="progress-outer"><div class="progress-inner" style="width:95%"></div></div>
+            <div class="q-badge"><span class="dot"></span>انتقادات و پیشنهادات</div>
+            <div class="q-text">لطفاً نظرات سازنده خود را بنویسید</div>
+        
+            <div class="feedback-section">
+              <div class="feedback-label">انتقادات و پیشنهادات <span class="badge-opt">اختیاری</span></div>
+              <textarea id="fb-suggest" placeholder="انتقادات، پیشنهادات و موضوعات دلخواه خود را بنویسید..."></textarea>
+            </div>
+        
+            <button class="btn-submit" onclick="submitAll()">ثبت نهایی پاسخ‌ها ✓</button>
+          </div>`;
+        }
+        
+        async function submitAll(){
+          const fbSuggest=document.getElementById("fb-suggest")?.value||"";
+          const duration=Math.round((Date.now()-startTime)/1000);
+          const mins=Math.floor(duration/60),secs=duration%60;
+        
+          const card=document.getElementById("q-card");
+          if(card){
+            const ov=document.createElement("div");
+            ov.className="sending-overlay";
+            ov.innerHTML=`<div class="spinner"></div><div class="sending-text">در حال ثبت پاسخ‌ها...</div>`;
+            card.appendChild(ov);
+          }
+        
+          const body=new FormData();
+          questions.forEach((q,i)=>{
+            const ans=answers[i]!==null?scaleOpts[answers[i]].label+` (${scaleOpts[answers[i]].tag})`:"بدون پاسخ";
+            body.append(`ردیف ${i+1}: ${q.text}`,ans);
+          });
+          body.append("انتقادات و پیشنهادات",fbSuggest||"---");
+          body.append("مدت پاسخ‌دهی",`${mins} دقیقه و ${secs} ثانیه`);
+          body.append("آی‌پی کاربر",userIP);
+          body.append("دستگاه کاربر",userDevice);
+          body.append("تاریخ و ساعت",new Date().toLocaleString("fa-IR"));
+        
+          try{await fetch(FORM_URL,{method:"POST",body,headers:{Accept:"application/json"}});}catch(e){}
+          renderDone(mins,secs);
+        }
+        
+        function renderDone(mins,secs){
+          const t=mins>0?`${mins} دقیقه و ${secs} ثانیه`:`${secs} ثانیه`;
+          const cl=["#358353","#cc332d","#5cb87a","#e8a020","#4a9eca","#f59e0b"];
+          let cc="";
+          for(let i=0;i<30;i++){cc+=`<div class="cc" style="background:${cl[i%cl.length]};left:${Math.random()*100}%;top:8%;animation-delay:${Math.random()*1.2}s;animation-duration:${2+Math.random()*1.5}s"></div>`;}
+          app.innerHTML=`<div class="card page">
+            <div class="confetti-wrap">${cc}</div>
+            <div class="done-screen">
+              <div class="done-icon-wrap">🎉</div>
+              <div class="done-title">با تشکر از شما!</div>
+              <div class="done-msg">
+                پاسخ‌های شما با موفقیت ثبت شدند.<br>
+                <strong>${questions.length} سوال</strong> را در <strong>${t}</strong> پاسخ دادید.
+              </div>
+              <div class="done-divider"></div>
+              <div class="done-thanks">
+                      نظر سازنده شما در بهبود برنامه‌های آینده مؤثر خواهد بود.
+              </div>
+            </div>
+          </div>`;
+        }
+        
+        renderIntro();
+    </script>
 </body>
+
 </html>
