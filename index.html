@@ -3,378 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نظرسنجی</title>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+<title>نظرسنجی رضایت‌مندی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #050a12;
-    --surface: rgba(10, 20, 40, 0.85);
-    --border: rgba(0, 220, 200, 0.18);
-    --neon: #00dcc8;
-    --neon2: #7b2fff;
-    --neon3: #ff3a8c;
-    --text: #e8f4f3;
-    --text-dim: #6b8f9a;
-    --glow: 0 0 24px rgba(0,220,200,0.35), 0 0 60px rgba(0,220,200,0.1);
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    font-family: 'Vazirmatn', sans-serif;
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(0,220,200,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,220,200,0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-    z-index: 0; pointer-events: none;
-  }
-
-  .blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.18; z-index: 0; pointer-events: none; animation: blobMove 12s ease-in-out infinite alternate; }
-  .blob1 { width: 500px; height: 500px; background: var(--neon2); top: -150px; right: -100px; }
-  .blob2 { width: 400px; height: 400px; background: var(--neon); bottom: -100px; left: -100px; animation-delay: -4s; }
-  .blob3 { width: 300px; height: 300px; background: var(--neon3); top: 50%; left: 50%; animation-delay: -8s; }
-  @keyframes blobMove { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(30px,20px) scale(1.08); } }
-
-  #app { position: relative; z-index: 10; width: 100%; max-width: 680px; padding: 20px; }
-
-  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
-  .logo { font-size: 13px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--neon); text-shadow: var(--glow); opacity: 0.8; }
-  .q-counter { font-size: 12px; font-weight: 600; color: var(--text-dim); letter-spacing: 1px; }
-  .q-counter span { color: var(--neon); font-size: 18px; font-weight: 900; }
-
-  .progress-wrap { position: relative; height: 3px; background: rgba(255,255,255,0.06); border-radius: 4px; margin-bottom: 48px; overflow: visible; }
-  .progress-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--neon2), var(--neon), var(--neon3)); background-size: 200% 100%; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 0 12px var(--neon), 0 0 30px rgba(0,220,200,0.3); animation: shimmer 3s linear infinite; }
-  @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
-  .progress-dot { position: absolute; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; background: var(--neon); border-radius: 50%; box-shadow: 0 0 12px var(--neon), 0 0 30px var(--neon); transition: left 0.6s cubic-bezier(0.4,0,0.2,1); animation: pulse 1.5s ease-in-out infinite; }
-  @keyframes pulse { 0%, 100% { transform: translateY(-50%) scale(1); } 50% { transform: translateY(-50%) scale(1.4); } }
-
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 48px 44px; backdrop-filter: blur(20px); box-shadow: 0 0 0 1px rgba(0,220,200,0.05), 0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05); position: relative; overflow: hidden; }
-  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--neon), var(--neon2), transparent); opacity: 0.6; }
-
-  .q-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,220,200,0.08); border: 1px solid rgba(0,220,200,0.2); border-radius: 100px; padding: 6px 16px; font-size: 12px; color: var(--neon); letter-spacing: 1px; font-weight: 700; margin-bottom: 24px; text-shadow: 0 0 10px var(--neon); }
-  .q-badge::before { content: ''; width: 6px; height: 6px; background: var(--neon); border-radius: 50%; box-shadow: 0 0 8px var(--neon); animation: blink 1.2s ease-in-out infinite; }
-  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-  .q-text { font-size: 24px; font-weight: 800; line-height: 1.5; margin-bottom: 36px; color: #fff; letter-spacing: -0.3px; }
-
-  .options { display: flex; flex-direction: column; gap: 12px; }
-
-  .option { position: relative; display: flex; align-items: center; gap: 16px; padding: 18px 22px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; cursor: pointer; transition: all 0.25s cubic-bezier(0.4,0,0.2,1); overflow: hidden; user-select: none; }
-  .option::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,220,200,0.06), rgba(123,47,255,0.06)); opacity: 0; transition: opacity 0.25s; }
-  .option:hover { border-color: rgba(0,220,200,0.35); transform: translateX(-4px); }
-  .option:hover::before { opacity: 1; }
-  .option.selected { border-color: var(--neon); background: rgba(0,220,200,0.08); box-shadow: 0 0 20px rgba(0,220,200,0.15), inset 0 0 20px rgba(0,220,200,0.05); transform: translateX(-4px); }
-  .option.selected::before { opacity: 1; }
-
-  .option .ripple { position: absolute; border-radius: 50%; background: rgba(0,220,200,0.25); transform: scale(0); animation: rippleAnim 0.6s linear; pointer-events: none; }
-  @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
-
-  .radio-dot { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; transition: all 0.25s; }
-  .option.selected .radio-dot { border-color: var(--neon); background: rgba(0,220,200,0.15); box-shadow: 0 0 12px rgba(0,220,200,0.5); }
-  .radio-dot::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--neon); box-shadow: 0 0 8px var(--neon); transform: scale(0); transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
-  .option.selected .radio-dot::after { transform: scale(1); }
-
-  .option-label { font-size: 16px; font-weight: 500; color: var(--text); transition: color 0.25s; line-height: 1.4; flex: 1; }
-  .option.selected .option-label { color: #fff; font-weight: 600; }
-  .option-letter { margin-right: auto; font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.2); letter-spacing: 1px; transition: color 0.25s; }
-  .option.selected .option-letter { color: var(--neon); text-shadow: 0 0 8px var(--neon); }
-
-  .btn-wrap { margin-top: 36px; display: flex; justify-content: flex-start; }
-  .btn-next { position: relative; display: inline-flex; align-items: center; gap: 12px; padding: 16px 36px; background: transparent; border: 1px solid var(--neon); border-radius: 14px; color: var(--neon); font-family: 'Vazirmatn', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; overflow: hidden; transition: all 0.3s; text-shadow: 0 0 10px var(--neon); box-shadow: 0 0 20px rgba(0,220,200,0.1); letter-spacing: 0.5px; }
-  .btn-next::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,220,200,0.15), rgba(123,47,255,0.1)); opacity: 0; transition: opacity 0.3s; }
-  .btn-next:hover { box-shadow: var(--glow); transform: translateY(-2px); }
-  .btn-next:hover::before { opacity: 1; }
-  .btn-next:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
-  .btn-arrow { display: inline-flex; transition: transform 0.3s; font-size: 18px; }
-  .btn-next:not(:disabled):hover .btn-arrow { transform: translateX(-4px); }
-
-  /* ─── Sending state ─── */
-  .sending-overlay {
-    position: absolute; inset: 0;
-    background: rgba(5,10,18,0.85);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 20px;
-    border-radius: 24px;
-    backdrop-filter: blur(10px);
-    z-index: 20;
-    animation: pageIn 0.3s ease both;
-  }
-  .spinner {
-    width: 50px; height: 50px;
-    border: 2px solid rgba(0,220,200,0.15);
-    border-top-color: var(--neon);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    box-shadow: 0 0 20px rgba(0,220,200,0.3);
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .sending-text { color: var(--neon); font-size: 15px; font-weight: 700; letter-spacing: 1px; text-shadow: 0 0 10px var(--neon); }
-
-  .page { animation: pageIn 0.5s cubic-bezier(0.4,0,0.2,1) both; }
-  @keyframes pageIn { from { opacity: 0; transform: translateY(30px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
-  .page-out { animation: pageOut 0.35s cubic-bezier(0.4,0,0.2,1) both !important; }
-  @keyframes pageOut { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-20px) scale(0.97); } }
-
-  /* ─── Done screen ─── */
-  .done-screen { text-align: center; padding: 60px 44px; }
-  .done-icon { width: 80px; height: 80px; border-radius: 50%; background: rgba(0,220,200,0.08); border: 2px solid var(--neon); display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 32px; box-shadow: 0 0 40px rgba(0,220,200,0.3), inset 0 0 20px rgba(0,220,200,0.1); animation: iconBounce 0.8s cubic-bezier(0.34,1.56,0.64,1) both; animation-delay: 0.3s; opacity: 0; }
-  @keyframes iconBounce { from { opacity: 0; transform: scale(0.3) rotate(-20deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
-  .done-title { font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 16px; letter-spacing: -0.5px; opacity: 0; animation: fadeUp 0.6s ease both; animation-delay: 0.6s; }
-  .done-sub { font-size: 16px; font-weight: 400; color: var(--text-dim); line-height: 1.7; opacity: 0; animation: fadeUp 0.6s ease both; animation-delay: 0.8s; }
-  .done-sub span { color: var(--neon); font-weight: 700; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-  .confetti-wrap { position: absolute; inset: 0; overflow: hidden; pointer-events: none; border-radius: 24px; }
-  .confetti-dot { position: absolute; width: 8px; height: 8px; border-radius: 2px; opacity: 0; animation: confettiFall 2s ease-out both; }
-  @keyframes confettiFall { 0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); } 100% { opacity: 0; transform: translateY(200px) rotate(540deg) scale(0.5); } }
-
-  @media (max-width: 640px) {
-    .card { padding: 32px 24px; }
-    .q-text { font-size: 19px; }
-    .option { padding: 15px 18px; }
-    .option-label { font-size: 14px; }
-    .done-screen { padding: 40px 24px; }
-    .done-title { font-size: 26px; }
-  }
-
-  body::after { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); pointer-events: none; z-index: 999; }
+  :root{--bg:#f4f6f3;--bg2:#eef1ec;--surface:#ffffff;--green:#358353;--green-l:#e8f2ec;--green-d:#236b3f;--red:#cc332d;--red-l:#fdf0ef;--text:#1a2e22;--text-mid:#4a6355;--text-dim:#8aa898;--border:#d4e2da;--shadow:0 4px 24px rgba(53,131,83,0.10),0 1px 4px rgba(0,0,0,0.06)}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);font-family:'Vazirmatn',sans-serif;color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;position:relative;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 10% 20%,rgba(53,131,83,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 90% 80%,rgba(204,51,45,0.05) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 80% 10%,rgba(53,131,83,0.05) 0%,transparent 50%);pointer-events:none;z-index:0}
+  body::after{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(53,131,83,0.12) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0}
+  #app{position:relative;z-index:10;width:100%;max-width:660px}
+  .card{background:var(--surface);border-radius:28px;padding:52px 48px;box-shadow:var(--shadow);border:1px solid rgba(53,131,83,0.10);position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--green),#5cb87a,var(--red))}
+  .progress-outer{height:6px;background:var(--bg2);border-radius:10px;margin-bottom:44px;overflow:hidden;border:1px solid var(--border)}
+  .progress-inner{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green-d),var(--green),#5cb87a);transition:width 0.7s cubic-bezier(0.4,0,0.2,1);position:relative}
+  .progress-inner::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.4) 50%,transparent 100%);animation:sheen 2s ease-in-out infinite}
+  @keyframes sheen{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+  .step-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .step-text{font-size:12px;font-weight:700;color:var(--text-dim);letter-spacing:0.5px}
+  .step-num{font-size:13px;font-weight:800;color:var(--green)}
+  .q-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-l);border:1px solid rgba(53,131,83,0.2);border-radius:100px;padding:6px 16px;font-size:11px;font-weight:800;color:var(--green-d);letter-spacing:0.5px;margin-bottom:20px}
+  .q-badge .dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:blink 1.4s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+  .q-text{font-size:22px;font-weight:800;line-height:1.6;color:var(--text);margin-bottom:32px;letter-spacing:-0.2px}
+  .scale-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+  .scale-opt{position:relative;display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:14px;border:1.5px solid var(--border);background:#fafcfa;cursor:pointer;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);overflow:hidden;user-select:none}
+  .scale-opt:hover{border-color:var(--green);background:var(--green-l);transform:translateX(-3px)}
+  .scale-opt.selected{border-color:var(--green);background:var(--green-l);transform:translateX(-3px);box-shadow:0 2px 12px rgba(53,131,83,0.15)}
+  .scale-opt.opt-0:hover,.scale-opt.opt-0.selected{border-color:var(--red);background:var(--red-l);box-shadow:0 2px 12px rgba(204,51,45,0.12)}
+  .scale-opt.opt-0.selected .radio-ring{border-color:var(--red)}
+  .scale-opt.opt-0.selected .radio-ring::after{background:var(--red);box-shadow:0 0 6px var(--red)}
+  .scale-opt.opt-0.selected .opt-label{color:var(--red)}
+  .scale-opt.opt-0.selected .opt-tag{background:var(--red);border-color:var(--red)}
+  .radio-ring{flex-shrink:0;width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+  .scale-opt.selected .radio-ring{border-color:var(--green);background:rgba(53,131,83,0.08)}
+  .radio-ring::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(53,131,83,0.5);transform:scale(0);transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1)}
+  .scale-opt.selected .radio-ring::after{transform:scale(1)}
+  .opt-icon{font-size:20px;flex-shrink:0}
+  .opt-label{font-size:15px;font-weight:600;color:var(--text-mid);flex:1;transition:color 0.2s}
+  .scale-opt.selected .opt-label{color:var(--green-d)}
+  .opt-tag{font-size:10px;font-weight:800;color:var(--text-dim);letter-spacing:0.5px;padding:3px 10px;border-radius:100px;background:var(--bg2);border:1px solid var(--border);transition:all 0.2s}
+  .scale-opt.selected .opt-tag{background:var(--green);color:#fff;border-color:var(--green)}
+  .ripple{position:absolute;border-radius:50%;background:rgba(53,131,83,0.18);transform:scale(0);animation:ripAnim 0.55s linear;pointer-events:none}
+  @keyframes ripAnim{to{transform:scale(4);opacity:0}}
+  .auto-bar{height:3px;background:var(--bg2);border-radius:4px;margin-top:16px;overflow:hidden;display:none}
+  .auto-bar.active{display:block}
+  .auto-fill{height:100%;width:0%;background:var(--green);border-radius:4px;animation:autoFill 0.85s linear forwards}
+  @keyframes autoFill{to{width:100%}}
+  .feedback-wrap{margin-top:4px}
+  .feedback-label{font-size:13px;font-weight:700;color:var(--text-mid);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .feedback-label span{background:var(--red-l);color:var(--red);font-size:10px;font-weight:800;padding:2px 8px;border-radius:100px;border:1px solid rgba(204,51,45,0.2)}
+  textarea{width:100%;min-height:120px;border:1.5px solid var(--border);border-radius:14px;padding:16px 18px;font-family:'Vazirmatn',sans-serif;font-size:14px;font-weight:400;color:var(--text);background:#fafcfa;resize:vertical;outline:none;transition:border-color 0.2s,box-shadow 0.2s;line-height:1.7}
+  textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(53,131,83,0.08)}
+  textarea::placeholder{color:var(--text-dim)}
+  .btn-submit{margin-top:24px;width:100%;padding:18px;background:linear-gradient(135deg,var(--green-d),var(--green));border:none;border-radius:14px;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:0.3px;transition:all 0.3s;box-shadow:0 4px 20px rgba(53,131,83,0.3);position:relative;overflow:hidden}
+  .btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(53,131,83,0.35)}
+  .page{animation:pageIn 0.45s cubic-bezier(0.4,0,0.2,1) both}
+  @keyframes pageIn{from{opacity:0;transform:translateY(28px) scale(0.98)}to{opacity:1;transform:none}}
+  .page-out{animation:pageOut 0.3s cubic-bezier(0.4,0,0.2,1) both !important}
+  @keyframes pageOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-18px)}}
+  .intro-logo{display:flex;align-items:center;justify-content:center;margin-bottom:32px}
+  .intro-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--green),#5cb87a);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 8px 24px rgba(53,131,83,0.3)}
+  .intro-title{font-size:28px;font-weight:900;color:var(--text);text-align:center;margin-bottom:12px;letter-spacing:-0.4px}
+  .intro-subtitle{font-size:14px;font-weight:500;color:var(--text-mid);text-align:center;line-height:1.9;margin-bottom:32px}
+  .intro-subtitle strong{color:var(--green-d);font-weight:700}
+  .intro-notice{background:linear-gradient(135deg,var(--green-l),#f0f8f3);border:1px solid rgba(53,131,83,0.2);border-radius:14px;padding:18px 20px;margin-bottom:32px;display:flex;gap:14px;align-items:flex-start}
+  .notice-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+  .notice-text{font-size:13px;font-weight:500;color:var(--green-d);line-height:1.8}
+  .intro-stats{display:flex;gap:12px;margin-bottom:36px}
+  .stat-box{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center}
+  .stat-num{font-size:22px;font-weight:900;color:var(--green-d)}
+  .stat-lbl{font-size:11px;font-weight:600;color:var(--text-dim);margin-top:2px}
+  .btn-start{width:100%;padding:20px;background:linear-gradient(135deg,var(--green-d),var(--green),#5cb87a);border:none;border-radius:16px;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:18px;font-weight:900;cursor:pointer;letter-spacing:0.3px;transition:all 0.3s;box-shadow:0 6px 24px rgba(53,131,83,0.35);animation:btnPulse 2.5s ease-in-out infinite}
+  @keyframes btnPulse{0%,100%{box-shadow:0 6px 24px rgba(53,131,83,0.35)}50%{box-shadow:0 8px 32px rgba(53,131,83,0.55)}}
+  .btn-start:hover{transform:translateY(-3px)}
+  .sending-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;border-radius:28px;backdrop-filter:blur(8px);z-index:50;animation:pageIn 0.3s ease both}
+  .spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 0.7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .sending-text{font-size:14px;font-weight:700;color:var(--green-d)}
+  .done-screen{text-align:center;padding:16px 0}
+  .done-icon-wrap{width:84px;height:84px;background:linear-gradient(135deg,var(--green-l),#dff0e6);border:2px solid rgba(53,131,83,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 28px;animation:bounceIn 0.7s cubic-bezier(0.34,1.56,0.64,1) both;animation-delay:0.2s;opacity:0;box-shadow:0 8px 28px rgba(53,131,83,0.2)}
+  @keyframes bounceIn{from{opacity:0;transform:scale(0.3)rotate(-15deg)}to{opacity:1;transform:none}}
+  .done-title{font-size:30px;font-weight:900;color:var(--text);margin-bottom:12px;opacity:0;animation:slideUp 0.5s ease both;animation-delay:0.5s}
+  .done-msg{font-size:15px;font-weight:400;color:var(--text-mid);line-height:1.8;opacity:0;animation:slideUp 0.5s ease both;animation-delay:0.7s}
+  .done-msg strong{color:var(--green-d);font-weight:700}
+  .done-divider{height:1px;background:var(--border);margin:28px 0;opacity:0;animation:slideUp 0.5s ease both;animation-delay:0.9s}
+  .done-thanks{font-size:13px;color:var(--text-dim);font-weight:500;opacity:0;animation:slideUp 0.5s ease both;animation-delay:1s}
+  @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .confetti-wrap{position:absolute;inset:0;overflow:hidden;pointer-events:none;border-radius:28px}
+  .cc{position:absolute;width:7px;height:7px;border-radius:2px;opacity:0;animation:ccFall 2.5s ease-out both}
+  @keyframes ccFall{0%{opacity:1;transform:translateY(-10px)rotate(0)scale(1)}100%{opacity:0;transform:translateY(220px)rotate(600deg)scale(0.4)}}
+  @media(max-width:600px){.card{padding:36px 24px}.q-text{font-size:18px}.intro-title{font-size:22px}.intro-stats{flex-wrap:wrap}.stat-box{min-width:calc(50% - 6px)}.scale-opt{padding:13px 16px}}
 </style>
 </head>
 <body>
-
-<canvas id="bg-canvas"></canvas>
-<div class="blob blob1"></div>
-<div class="blob blob2"></div>
-<div class="blob blob3"></div>
 <div id="app"></div>
-
 <script>
-// ══════════════════════════════════════════
-//  ⬇️  اینجا Formspree ID خودت رو بذار
-//  مثال: https://formspree.io/f/xyzabc12
-// ══════════════════════════════════════════
-const APPS_SCRIPT_URL = "https://formspree.io/f/mwvnlbbn";
-
-const questions = [
-  { text: "در طول روز چقدر از اینترنت استفاده می‌کنید؟",       opts: ["کمتر از ۲ ساعت", "بین ۲ تا ۵ ساعت", "بین ۵ تا ۱۰ ساعت", "بیشتر از ۱۰ ساعت"] },
-  { text: "کدام شبکه اجتماعی را بیشتر استفاده می‌کنید؟",        opts: ["اینستاگرام", "تلگرام", "توییتر / X", "تیک‌تاک یا یوتیوب"] },
-  { text: "از زندگی روزمره‌تان چقدر رضایت دارید؟",              opts: ["خیلی راضی هستم", "نسبتاً راضی‌ام", "خیلی راضی نیستم", "اصلاً راضی نیستم"] },
-  { text: "بیشتر با کدام دستگاه به اینترنت وصل می‌شوید؟",       opts: ["گوشی موبایل", "لپ‌تاپ یا کامپیوتر", "تبلت", "هر دستگاهی که دم دستم باشه"] },
-  { text: "علاقه‌مندترین حوزه شما کدام است؟",                   opts: ["تکنولوژی و برنامه‌نویسی", "هنر و موسیقی و فیلم", "ورزش و سلامتی", "کسب‌وکار و اقتصاد"] },
-  { text: "به طور میانگین در شبانه‌روز چند ساعت می‌خوابید؟",    opts: ["کمتر از ۵ ساعت", "۵ تا ۷ ساعت", "۷ تا ۹ ساعت", "بیشتر از ۹ ساعت"] },
-  { text: "کدام نوع محتوا را بیشتر دوست دارید؟",                opts: ["ویدیو و پادکست", "مقاله و متن", "عکس و گرافیک", "بازی و تعاملی"] },
-  { text: "چقدر به هوش مصنوعی در زندگی روزمره اعتماد دارید؟",  opts: ["کاملاً بهش اعتماد دارم", "اعتماد نسبی دارم", "خیلی اعتماد ندارم", "اصلاً ازش استفاده نمی‌کنم"] },
-  { text: "موسیقی در زندگیتان چه جایگاهی دارد؟",               opts: ["بدون موسیقی نمی‌تونم", "هر روز گوش می‌دم", "گاهی گوش می‌دم", "خیلی کم یا اصلاً نه"] },
-  { text: "آینده دنیا را چطور می‌بینید؟",                       opts: ["خوش‌بینانه و پر از امید", "نسبتاً خوب ولی نگرانی‌هایی هم هست", "تاریک و پر از چالش", "نمی‌دونم، همه چیز نامشخصه"] }
+const FORM_URL="https://formspree.io/f/mwvnlbbn";
+const questions=[
+  {text:"کیفیت کلی خدمات ما را چطور ارزیابی می‌کنید؟"},
+  {text:"سرعت و دقت پاسخگویی تیم ما چقدر بود؟"},
+  {text:"میزان رضایت شما از محصولات ارائه‌شده چقدر است؟"},
+  {text:"آیا کارکنان ما به اندازه کافی حرفه‌ای و مؤدب بودند؟"},
+  {text:"قیمت‌گذاری ما را نسبت به کیفیت چطور می‌بینید؟"},
+  {text:"آیا فرآیند دریافت خدمات آسان و روان بود؟"},
+  {text:"تا چه اندازه انتظارات شما برآورده شد؟"},
+  {text:"چقدر احتمال دارد ما را به دیگران توصیه کنید؟"},
+  {text:"به طور کلی، تجربه همکاری با ما را چطور ارزیابی می‌کنید؟"}
 ];
+const scaleOpts=[
+  {label:"ضعیف",icon:"😞",tag:"۱"},
+  {label:"نسبتاً ضعیف",icon:"😕",tag:"۲"},
+  {label:"متوسط",icon:"😐",tag:"۳"},
+  {label:"خوب",icon:"🙂",tag:"۴"},
+  {label:"عالی",icon:"😍",tag:"۵"}
+];
+let current=-1,answers=new Array(questions.length).fill(null),startTime=null,userIP="نامشخص",userDevice="";
+const app=document.getElementById("app");
 
-const LETTERS = ['الف', 'ب', 'پ', 'ت'];
-let current = 0;
-let answers = new Array(questions.length).fill(null);
-let startTime = Date.now();
-const app = document.getElementById('app');
+async function detectInfo(){
+  try{const r=await fetch("https://api.ipify.org?format=json");const d=await r.json();userIP=d.ip;}catch(e){}
+  const ua=navigator.userAgent;
+  if(/iPhone/.test(ua)){const m=ua.match(/iPhone OS ([\d_]+)/);userDevice="iPhone"+(m?" iOS "+m[1].replace(/_/g,"."):"");}
+  else if(/iPad/.test(ua)){userDevice="iPad";}
+  else if(/Android/.test(ua)){const m=ua.match(/Android ([\d.]+);?\s*([^;)]+)?/);userDevice="Android "+(m?m[1]+(m[2]?" - "+m[2].trim():""):"");}
+  else if(/Windows NT/.test(ua)){userDevice="Windows Desktop";}
+  else if(/Mac OS X/.test(ua)){userDevice="Mac Desktop";}
+  else{userDevice=ua.substring(0,60);}
+}
+detectInfo();
 
-// ─── Render question ───
-function render() {
-  if (current >= questions.length) { submitAnswers(); return; }
-  const q = questions[current];
-  const pct = (current / questions.length) * 100;
-
-  app.innerHTML = `
-    <div class="header">
-      <div class="logo">SURVEY</div>
-      <div class="q-counter"><span>${current + 1}</span> / ${questions.length}</div>
+function renderIntro(){
+  app.innerHTML=`<div class="card page">
+    <div class="intro-logo"><div class="intro-icon">📋</div></div>
+    <div class="intro-title">نظرسنجی رضایت‌مندی</div>
+    <div class="intro-subtitle">با سلام و احترام،<br>این نظرسنجی با هدف <strong>بهبود کیفیت خدمات</strong> طراحی شده است.<br>نظر صادقانه شما برای ما بسیار ارزشمند است.</div>
+    <div class="intro-notice">
+      <div class="notice-icon">🙏</div>
+      <div class="notice-text">لطفاً با <strong>حوصله و دقت</strong> به سوالات پاسخ دهید.<br>پاسخ‌های شما کاملاً محرمانه بوده و فقط برای بهبود خدمات استفاده می‌شود.</div>
     </div>
-    <div class="progress-wrap">
-      <div class="progress-bar" style="width:${pct}%"></div>
-      <div class="progress-dot" style="left:calc(${Math.max(0,Math.min(100,pct))}% - 5px)"></div>
+    <div class="intro-stats">
+      <div class="stat-box"><div class="stat-num">۹</div><div class="stat-lbl">سوال</div></div>
+      <div class="stat-box"><div class="stat-num">۳</div><div class="stat-lbl">دقیقه</div></div>
+      <div class="stat-box"><div class="stat-num">۱۰۰٪</div><div class="stat-lbl">محرمانه</div></div>
     </div>
-    <div class="card page" id="q-card">
-      <div class="q-badge">سوال ${current + 1} از ${questions.length}</div>
-      <div class="q-text">${q.text}</div>
-      <div class="options">
-        ${q.opts.map((o, i) => `
-          <div class="option${answers[current] === i ? ' selected' : ''}" data-idx="${i}" onclick="selectOpt(this,${i})">
-            <div class="radio-dot"></div>
-            <div class="option-label">${o}</div>
-            <div class="option-letter">${LETTERS[i]}</div>
-          </div>`).join('')}
-      </div>
-      <div class="btn-wrap">
-        <button class="btn-next" id="btn-next" onclick="nextQ()" ${answers[current] === null ? 'disabled' : ''}>
-          ${current < questions.length - 1 ? 'سوال بعدی' : 'ثبت پاسخ‌ها'}
-          <span class="btn-arrow">←</span>
-        </button>
-      </div>
-    </div>`;
+    <button class="btn-start" onclick="startSurvey()">شروع نظرسنجی ←</button>
+  </div>`;
 }
 
-function selectOpt(el, idx) {
-  const rect = el.getBoundingClientRect();
-  const rip = document.createElement('span');
-  rip.className = 'ripple';
-  const size = Math.max(el.offsetWidth, el.offsetHeight);
-  rip.style.cssText = `width:${size}px;height:${size}px;top:${(el.offsetHeight-size)/2}px;right:${(el.offsetWidth-size)/2}px;`;
+function startSurvey(){
+  startTime=Date.now();
+  const c=app.querySelector(".card");
+  c.classList.add("page-out");
+  setTimeout(()=>{current=0;render();},300);
+}
+
+function render(){
+  if(current>=questions.length){renderFeedback();return;}
+  const q=questions[current];
+  const pct=Math.round((current/questions.length)*100);
+  app.innerHTML=`<div class="card page" id="q-card">
+    <div class="step-label"><span class="step-text">پیشرفت شما</span><span class="step-num">سوال ${current+1} از ${questions.length}</span></div>
+    <div class="progress-outer"><div class="progress-inner" style="width:${pct}%"></div></div>
+    <div class="q-badge"><span class="dot"></span>سوال ${current+1} از ${questions.length}</div>
+    <div class="q-text">${q.text}</div>
+    <div class="scale-wrap">
+      ${scaleOpts.map((o,i)=>`<div class="scale-opt opt-${i}${answers[current]===i?" selected":""}" onclick="selectOpt(this,${i})">
+        <div class="radio-ring"></div>
+        <span class="opt-icon">${o.icon}</span>
+        <span class="opt-label">${o.label}</span>
+        <span class="opt-tag">${o.tag}</span>
+      </div>`).join("")}
+    </div>
+    <div class="auto-bar${answers[current]!==null?" active":""}" id="auto-bar">
+      <div class="auto-fill"></div>
+    </div>
+  </div>`;
+}
+
+function selectOpt(el,idx){
+  const rip=document.createElement("span");
+  rip.className="ripple";
+  const s=Math.max(el.offsetWidth,el.offsetHeight);
+  rip.style.cssText=`width:${s}px;height:${s}px;top:${(el.offsetHeight-s)/2}px;right:${(el.offsetWidth-s)/2}px;`;
   el.appendChild(rip);
-  setTimeout(() => rip.remove(), 600);
-  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  answers[current] = idx;
-  const btn = document.getElementById('btn-next');
-  if (btn) btn.disabled = false;
+  setTimeout(()=>rip.remove(),600);
+  document.querySelectorAll(".scale-opt").forEach(o=>o.classList.remove("selected"));
+  el.classList.add("selected");
+  answers[current]=idx;
+  const bar=document.getElementById("auto-bar");
+  if(bar)bar.classList.add("active");
+  setTimeout(()=>{
+    const card=document.getElementById("q-card");
+    if(!card)return;
+    card.classList.add("page-out");
+    setTimeout(()=>{current++;render();},300);
+  },850);
 }
 
-function nextQ() {
-  if (answers[current] === null) return;
-  const card = document.getElementById('q-card');
-  card.classList.add('page-out');
-  setTimeout(() => { current++; render(); }, 350);
-}
-
-// ─── Submit to Google Sheets ───
-async function submitAnswers() {
-  const card = document.getElementById('q-card');
-  if (card) card.classList.add('page-out');
-
-  const duration = Math.round((Date.now() - startTime) / 1000);
-  const humanAnswers = answers.map((idx, qIdx) =>
-    idx !== null ? questions[qIdx].opts[idx] : "بدون پاسخ"
-  );
-
-  // نمایش loading
-  setTimeout(() => {
-    app.innerHTML = `
-      <div class="header"><div class="logo">SURVEY</div><div class="q-counter"><span>✓</span></div></div>
-      <div class="progress-wrap">
-        <div class="progress-bar" style="width:100%"></div>
-        <div class="progress-dot" style="left:calc(100% - 5px)"></div>
-      </div>
-      <div class="card page" id="q-card">
-        <div class="sending-overlay">
-          <div class="spinner"></div>
-          <div class="sending-text">در حال ذخیره پاسخ‌ها...</div>
-        </div>
-      </div>`;
-
-    // ارسال به Formspree
-    const formData = new FormData();
-    humanAnswers.forEach((ans, i) => {
-      formData.append(`سوال ${i+1}: ${questions[i].text}`, ans);
-    });
-    formData.append("مدت پاسخ‌دهی", `${Math.floor(duration/60)} دقیقه و ${duration%60} ثانیه`);
-
-    fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      body: formData,
-      headers: { "Accept": "application/json" }
-    })
-    .then(() => renderDone(duration))
-    .catch(() => renderDone(duration));
-  }, 350);
-}
-
-// ─── Done screen ───
-function renderDone(duration) {
-  const colors = ['#00dcc8','#7b2fff','#ff3a8c','#ffd60a','#00c8ff'];
-  let dots = '';
-  for (let i = 0; i < 30; i++) {
-    const c = colors[i % colors.length];
-    dots += `<div class="confetti-dot" style="background:${c};left:${Math.random()*100}%;top:10%;animation-duration:${1.5+Math.random()}s;animation-delay:${Math.random()*1.5}s;"></div>`;
-  }
-  const mins = Math.floor(duration / 60);
-  const secs = duration % 60;
-  const timeStr = mins > 0 ? `${mins} دقیقه و ${secs} ثانیه` : `${secs} ثانیه`;
-
-  app.innerHTML = `
-    <div class="header"><div class="logo">SURVEY</div><div class="q-counter"><span>✓</span></div></div>
-    <div class="progress-wrap">
-      <div class="progress-bar" style="width:100%"></div>
-      <div class="progress-dot" style="left:calc(100% - 5px)"></div>
+function renderFeedback(){
+  app.innerHTML=`<div class="card page" id="q-card">
+    <div class="step-label"><span class="step-text">پیشرفت شما</span><span class="step-num">آخرین مرحله</span></div>
+    <div class="progress-outer"><div class="progress-inner" style="width:95%"></div></div>
+    <div class="q-badge"><span class="dot"></span>انتقادات و پیشنهادات</div>
+    <div class="q-text">نظر، انتقاد یا پیشنهادی دارید؟</div>
+    <div class="feedback-wrap">
+      <div class="feedback-label">متن خود را بنویسید <span>اختیاری</span></div>
+      <textarea id="fb" placeholder="هر نظر یا پیشنهادی که دارید اینجا بنویسید..."></textarea>
     </div>
-    <div class="card page done-screen" id="q-card">
-      <div class="confetti-wrap">${dots}</div>
-      <div class="done-icon">✓</div>
-      <div class="done-title">ممنون از شما! 🙌</div>
-      <div class="done-sub">
-        پاسخ‌های شما با موفقیت ثبت شدند.<br>
-        <span>${questions.length} سوال</span> رو در <span>${timeStr}</span> پاسخ دادید.
-      </div>
-    </div>`;
+    <button class="btn-submit" onclick="submitAll()">ثبت نهایی پاسخ‌ها ✓</button>
+  </div>`;
 }
 
-// ─── Particle canvas ───
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-let W, H, particles = [];
-function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-resize();
-window.addEventListener('resize', resize);
-
-class Particle {
-  constructor() { this.reset(); }
-  reset() {
-    this.x = Math.random() * W; this.y = Math.random() * H;
-    this.r = 0.5 + Math.random() * 1.5;
-    this.vx = (Math.random() - 0.5) * 0.4; this.vy = (Math.random() - 0.5) * 0.4;
-    this.life = 0; this.maxLife = 200 + Math.random() * 300;
-    this.color = ['#00dcc8','#7b2fff','#ff3a8c','#00c8ff'][Math.floor(Math.random()*4)];
+async function submitAll(){
+  const fb=document.getElementById("fb")?.value||"";
+  const duration=Math.round((Date.now()-startTime)/1000);
+  const mins=Math.floor(duration/60),secs=duration%60;
+  const card=document.getElementById("q-card");
+  if(card){
+    const ov=document.createElement("div");
+    ov.className="sending-overlay";
+    ov.innerHTML=`<div class="spinner"></div><div class="sending-text">در حال ثبت پاسخ‌ها...</div>`;
+    card.appendChild(ov);
   }
-  update() {
-    this.x += this.vx; this.y += this.vy; this.life++;
-    if (this.life > this.maxLife || this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
-  }
-  draw() {
-    const alpha = Math.sin((this.life / this.maxLife) * Math.PI) * 0.6;
-    ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = this.color;
-    ctx.shadowBlur = 6; ctx.shadowColor = this.color;
-    ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fill(); ctx.restore();
-  }
+  const body=new FormData();
+  questions.forEach((q,i)=>{
+    const ans=answers[i]!==null?scaleOpts[answers[i]].label+` (${scaleOpts[answers[i]].tag})`:"بدون پاسخ";
+    body.append(`س${i+1}: ${q.text}`,ans);
+  });
+  body.append("انتقادات و پیشنهادات",fb||"---");
+  body.append("مدت پاسخ‌دهی",`${mins} دقیقه و ${secs} ثانیه`);
+  body.append("آی‌پی کاربر",userIP);
+  body.append("دستگاه کاربر",userDevice);
+  body.append("تاریخ و ساعت",new Date().toLocaleString("fa-IR"));
+  try{await fetch(FORM_URL,{method:"POST",body,headers:{Accept:"application/json"}});}catch(e){}
+  renderDone(mins,secs);
 }
 
-for (let i = 0; i < 120; i++) {
-  const p = new Particle();
-  p.life = Math.floor(Math.random() * p.maxLife);
-  particles.push(p);
+function renderDone(mins,secs){
+  const t=mins>0?`${mins} دقیقه و ${secs} ثانیه`:`${secs} ثانیه`;
+  const cl=["#358353","#cc332d","#5cb87a","#e8a020","#4a9eca","#a855f7"];
+  let cc="";
+  for(let i=0;i<30;i++){cc+=`<div class="cc" style="background:${cl[i%cl.length]};left:${Math.random()*100}%;top:8%;animation-delay:${Math.random()*1.2}s;animation-duration:${2+Math.random()*1.5}s"></div>`;}
+  app.innerHTML=`<div class="card page">
+    <div class="confetti-wrap">${cc}</div>
+    <div class="done-screen">
+      <div class="done-icon-wrap">🎉</div>
+      <div class="done-title">ممنون از شما!</div>
+      <div class="done-msg">پاسخ‌های شما با موفقیت ثبت شدند.<br><strong>${questions.length} سوال</strong> را در <strong>${t}</strong> پاسخ دادید.</div>
+      <div class="done-divider"></div>
+      <div class="done-thanks">نظر شما برای ما ارزشمند است ❤️<br>با کمک شما خدماتمان را بهتر می‌کنیم.</div>
+    </div>
+  </div>`;
 }
 
-function drawLines() {
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i+1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 100) {
-        ctx.save(); ctx.globalAlpha = (1 - dist/100) * 0.08;
-        ctx.strokeStyle = '#00dcc8'; ctx.lineWidth = 0.5;
-        ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke(); ctx.restore();
-      }
-    }
-  }
-}
-
-function loop() {
-  ctx.clearRect(0,0,W,H);
-  particles.forEach(p => { p.update(); p.draw(); });
-  drawLines();
-  requestAnimationFrame(loop);
-}
-loop();
-render();
+renderIntro();
 </script>
 </body>
 </html>
